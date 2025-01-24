@@ -1,0 +1,474 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "My API",
+    "description": "API for Authentication with Basic Auth",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Đăng ký người dùng mới",
+        "description": "Đăng ký người dùng với tên người dùng, mật khẩu và email.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                },
+                "required": ["username", "password", "email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Người dùng đã được tạo thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Tên đăng nhập đã tồn tại"
+          },
+          "400": {
+            "description": "Dữ liệu không hợp lệ"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login with username and password",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Login successful"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Đăng xuất người dùng",
+        "description": "Đăng xuất người dùng khỏi hệ thống bằng cách hủy phiên làm việc.",
+        "responses": {
+          "200": {
+            "description": "Đăng xuất thành công.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Đăng xuất thành công!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Đã xảy ra lỗi khi hủy phiên làm việc.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Đã xảy ra lỗi khi đăng xuất."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+  "/upload": {
+  "post": {
+    "summary": "Upload a DXF or DWG file",
+    "description": "Uploads a DXF or DWG file, converts any DWG file to DXF format, and stores it in the database. Each file will be saved with a unique name using a timestamp to prevent overwriting.",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "multipart/form-data": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "format": "binary",
+                "description": "The DXF or DWG file to upload. DWG files will be converted to DXF."
+              },
+              "userId": {
+                "type": "string",
+                "description": "The user ID for associating the file.",
+                "nullable": false 
+              }
+            },
+            "required": ["file", "userId"] 
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "File uploaded successfully.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "File uploaded successfully"
+                },
+                "file": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "filename": {
+                      "type": "string",
+                      "example": "1672447712345_example.dxf"
+                    },
+                    "filePath": {
+                      "type": "string",
+                      "example": "/uploads/1672447712345_example.dxf"
+                    },
+                    "readLink": {
+                      "type": "string",
+                      "example": "/read-dxf/1672447712345_example.dxf"
+                    },
+                    "downloadLink": {
+                      "type": "string",
+                      "example": "/download/123"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "No file uploaded or invalid file type."
+      },
+      "500": {
+        "description": "Error processing file or saving to database."
+      }
+    }
+  }
+},
+    "/autosave": {
+      "post": {
+        "description": "Start autosave process",
+        "responses": {
+          "200": {
+            "description": "Autosave initiated"
+          }
+        }
+      }
+    },
+    "/download/{id}": {
+      "get": {
+        "description": "Download the original DXF file without any modifications",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique ID of the DXF file to download (required)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File downloaded successfully",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found"
+          },
+          "500": {
+            "description": "Error retrieving the file"
+          }
+        }
+      }
+    },
+ "/history/{userId}": {
+  "get": {
+    "summary": "Get the history of uploaded files for a specific user",
+    "description": "Fetches the list of uploaded files for a specific user. If userId is not provided, it fetches the files of the default user. The response includes details of files that may not exist.",
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "description": "The ID of the user whose files history is being fetched. If not provided, it fetches the files of the default user.",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "A list of uploaded files and missing files information",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "description": "Indicates if the request was successful."
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "uploadedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "user": {
+                        "type": "string"
+                      },
+                      "downloadUrl": {
+                        "type": "string",
+                        "description": "The URL to download the file."
+                      },
+                      "exists": {
+                        "type": "boolean",
+                        "description": "Indicates if the file exists on the server."
+                      },
+                      "fullPath": {
+                        "type": "string",
+                        "description": "The full path of the file on the server."
+                      }
+                    }
+                  }
+                },
+                "missingFiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "fullPath": {
+                        "type": "string",
+                        "description": "The full path of the file that does not exist."
+                      },
+                      "uploadedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "user": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal server error while fetching file history."
+      }
+    }
+  }
+},
+    "/read-dxf/{fileId}": {
+      "get": {
+        "summary": "Read the content of a DXF file",
+        "description": "Reads the content of a DXF file and returns the filtered entities (only LINE type) and basic file information.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fileId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the DXF file to read"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The content of the DXF file, including filtered entities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fileId": {
+                      "type": "string",
+                      "description": "The ID of the DXF file"
+                    },
+                    "fileName": {
+                      "type": "string",
+                      "description": "The name of the DXF file"
+                    },
+                    "user": {
+                      "type": "string",
+                      "description": "The user who uploaded the file"
+                    },
+                    "entities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "description": "The type of the entity (should be LINE)"
+                          },
+                          "handle": {
+                            "type": "string",
+                            "description": "The handle of the entity"
+                          },
+                          "ownerHandle": {
+                            "type": "string",
+                            "description": "The owner handle of the entity"
+                          },
+                          "layer": {
+                            "type": "string",
+                            "description": "The layer of the entity"
+                          },
+                          "colorIndex": {
+                            "type": "integer",
+                            "description": "The color index of the entity"
+                          },
+                          "color": {
+                            "type": "integer",
+                            "description": "The color of the entity"
+                          },
+                          "lineweight": {
+                            "type": "integer",
+                            "description": "The line weight of the entity"
+                          },
+                          "center": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "description": "The center point of the entity (if applicable)"
+                          },
+                          "radius": {
+                            "type": "number",
+                            "description": "The radius of the entity (if applicable)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found"
+          },
+          "500": {
+            "description": "Error reading or parsing the file"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+https://dev.to/jctaveras/sequelize-typescript-what-you-need-to-know-41mj
+https://greenydev.com/blog/sequelize-typescript/
+https://medium.com/@piusrestiantoro02/set-up-an-express-api-with-typescript-and-sequelize-in-minutes-with-a-boilerplate-1ec34273433f

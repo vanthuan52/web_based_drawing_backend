@@ -1,0 +1,22 @@
+# [GET] Get User Profile
+/user/profile:
+  get:
+    tags:
+      - User
+    summary: Get User profile by decoded ID from token
+    response:
+      404:
+        description: 'User not found'
+      401:
+        description: 'Unauthorized'
+      500:
+        description: 'Interanl Server Error'
+    security:
+      - bearerAuth: []
+
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: 'JWT Bearer token for authorization. Example: "Bearer {token}"'
